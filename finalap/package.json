@@ -1,0 +1,16 @@
+{
+  "name": "tsukuyomi-watch",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A local astronomy observing companion",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "test": "node --test",
+    "build": "npm run check",
+    "check": "node --check server.js && node --check astronomy.js && node --check script.js && node --check academy.js"
+  }
+}

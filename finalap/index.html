@@ -1,0 +1,2159 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#09090d">
+
+    <meta name="description"
+          content="Tsukuyomi Watch — a local astronomy guide for observing weather,
+          approximate lunar phases, NASA imagery, and an observation journal.">
+
+    <title>TSUKUYOMI WATCH | Celestial Intelligence</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          crossorigin="">
+
+    <!-- Main stylesheet: Part 3 -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =========================================
+         BACKGROUND ATMOSPHERE
+    ========================================== -->
+
+    <div class="ambient-background" aria-hidden="true">
+        <div class="nebula nebula-one"></div>
+        <div class="nebula nebula-two"></div>
+        <div class="moon-glow"></div>
+        <div id="starfield"></div>
+        <canvas id="particle-canvas"></canvas>
+    </div>
+
+    <div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
+
+    <!-- =========================================
+         NAVIGATION
+    ========================================== -->
+
+    <header class="site-header" id="top">
+
+        <a class="brand" href="#home" aria-label="Tsukuyomi Watch home">
+
+            <span class="brand-symbol" aria-hidden="true">☾</span>
+
+            <span class="brand-copy">
+                <span class="brand-title">TSUKUYOMI</span>
+                <span class="brand-subtitle">CELESTIAL INTELLIGENCE</span>
+            </span>
+
+        </a>
+
+        <button class="mobile-menu-toggle"
+                id="mobile-menu-toggle"
+                aria-label="Open navigation"
+                aria-expanded="false"
+                aria-controls="main-navigation">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <nav class="main-navigation" id="main-navigation"
+             aria-label="Main navigation">
+
+            <a href="#home" class="nav-link active">Home</a>
+            <a href="#watchtower" class="nav-link">Watchtower</a>
+            <a href="#academy" class="nav-link">Astral Academy</a>
+            <a href="#events" class="nav-link">Events</a>
+            <a href="#spirit-lens" class="nav-link">Spirit Lens</a>
+            <a href="#dashboard" class="nav-link">Dashboard</a>
+
+        </nav>
+
+        <div class="header-actions">
+
+            <button class="secondary-button global-search-trigger"
+                    id="global-search-button"
+                    aria-haspopup="dialog"
+                    aria-controls="global-search-dialog">
+                SEARCH <kbd>/</kbd>
+            </button>
+
+            <span class="system-status">
+                <span class="status-dot"></span>
+                <span id="system-status-text">STARTING LOCAL SERVICES</span>
+            </span>
+
+            <button class="icon-button" id="theme-toggle"
+                    aria-label="Toggle night theme"
+                    title="Toggle night theme">
+                ☾
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <main>
+
+        <!-- =====================================
+             HERO / LANDING SECTION
+        ====================================== -->
+
+        <section class="hero-section" id="home">
+
+            <div class="hero-content reveal">
+
+                <div class="eyebrow">
+                    <span class="eyebrow-line"></span>
+                    <span>THE SKY IS YOURS TO EXPLORE</span>
+                    <span class="eyebrow-line"></span>
+                </div>
+
+                <h1 class="hero-title">
+                    BEYOND THE<br>
+                    <span class="hero-title-highlight">SOLAR</span>
+                    <span class="hero-title-outline">SYSTEM.</span>
+                </h1>
+
+                <p class="hero-description">
+                    Your celestial intelligence system.
+
+                    Discover sacred dark skies, predict cosmic events,
+                    and unveil the hidden beauty of the universe
+                    through sourced astronomy imagery and clearly labeled calculations.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <a href="#watchtower" class="primary-button">
+                        <span>EXPLORE THE NIGHT</span>
+                        <span aria-hidden="true">↗</span>
+                    </a>
+
+                    <a href="#events" class="secondary-button">
+                        <span aria-hidden="true">◉</span>
+                        <span>VIEW CELESTIAL EVENTS</span>
+                    </a>
+
+                </div>
+
+                <div class="hero-footnote">
+                    <span class="tiny-star">✦</span>
+                    INSPIRED BY THE ART OF THE SAMURAI
+                </div>
+
+            </div>
+
+            <div class="hero-art reveal" role="group" aria-label="Animated solar system illustration">
+
+                <div class="solar-system" role="img"
+                     aria-label="An animated model of Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus and Neptune orbiting the Sun. Orbital distances and planet sizes are not to scale.">
+                    <div class="solar-system-halo"></div>
+                    <div class="solar-sun"><span class="sr-only">Sun</span></div>
+                    <div class="solar-orbit solar-orbit-mercury"><span class="solar-planet mercury"></span></div>
+                    <div class="solar-orbit solar-orbit-venus"><span class="solar-planet venus"></span></div>
+                    <div class="solar-orbit solar-orbit-earth"><span class="solar-planet earth"></span></div>
+                    <div class="solar-orbit solar-orbit-mars"><span class="solar-planet mars"></span></div>
+                    <div class="solar-orbit solar-orbit-jupiter"><span class="solar-planet jupiter"></span></div>
+                    <div class="solar-orbit solar-orbit-saturn"><span class="solar-planet saturn"></span></div>
+                    <div class="solar-orbit solar-orbit-uranus"><span class="solar-planet uranus"></span></div>
+                    <div class="solar-orbit solar-orbit-neptune"><span class="solar-planet neptune"></span></div>
+                </div>
+
+                <p class="solar-system-note">ANIMATED ORBITAL MODEL <span aria-hidden="true">·</span> NOT TO SCALE</p>
+                <ul class="solar-system-legend" aria-label="Planets shown in order from the Sun">
+                    <li class="legend-mercury">Mercury</li>
+                    <li class="legend-venus">Venus</li>
+                    <li class="legend-earth">Earth</li>
+                    <li class="legend-mars">Mars</li>
+                    <li class="legend-jupiter">Jupiter</li>
+                    <li class="legend-saturn">Saturn</li>
+                    <li class="legend-uranus">Uranus</li>
+                    <li class="legend-neptune">Neptune</li>
+                </ul>
+
+                <div class="hero-coordinate coordinate-top">
+                    <span>OBSERVATORY POSITION</span>
+                    <strong id="hero-coordinate">00° 00′ 00″</strong>
+                </div>
+
+                <div class="hero-coordinate coordinate-bottom">
+                    <span>THE SOLAR SYSTEM</span>
+                    <strong>ONE STAR · EIGHT PLANETS</strong>
+                </div>
+
+                <div class="floating-star star-one">✦</div>
+                <div class="floating-star star-two">✧</div>
+                <div class="floating-star star-three">✦</div>
+
+            </div>
+
+            <div class="hero-bottom-strip">
+
+                <div>
+                    <span class="strip-label">MISSION</span>
+                    <span class="strip-value">FIND YOUR DARK SKY</span>
+                </div>
+
+                <div>
+                    <span class="strip-label">OBSERVATORY</span>
+                    <span class="strip-value" id="observer-location">
+                        LOCATION NOT CONNECTED
+                    </span>
+                </div>
+
+                <div>
+                    <span class="strip-label">LOCAL TIME</span>
+                    <span class="strip-value" id="local-clock">--:--:--</span>
+                </div>
+
+                <div>
+                    <span class="strip-label">SKY CONDITIONS</span>
+                    <span class="strip-value" id="hero-sky-status">
+                        AWAITING WEATHER DATA
+                    </span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             WATCHTOWER: STARGAZING FINDER
+        ====================================== -->
+
+        <section class="content-section watchtower-section"
+                 id="watchtower">
+
+            <div class="section-heading reveal">
+
+                <div class="section-index">01 / THE WATCHTOWER</div>
+
+                <div class="section-heading-row">
+
+                    <div>
+                        <h2>FIND YOUR <span>DARK SKY.</span></h2>
+
+                        <p>
+                            The best view of the universe begins with
+                            the right place, the right weather,
+                            and the right moment.
+                        </p>
+                    </div>
+
+                    <div class="section-emblem" aria-hidden="true">⛩</div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Location search -->
+
+            <div class="location-control-panel glass-panel reveal">
+
+                <div class="location-input-group">
+
+                    <label for="location-input">YOUR OBSERVATION POINT</label>
+
+                    <div class="location-input-row">
+
+                        <input type="text"
+                               id="location-input"
+                               placeholder="Enter city, area, or coordinates..."
+                               autocomplete="off"
+                               aria-autocomplete="list"
+                               aria-controls="location-suggestions">
+
+                        <button class="primary-button"
+                                id="search-location-btn">
+                            SEARCH SKY
+                        </button>
+
+                    </div>
+
+                    <label class="region-picker-label" for="india-region">
+                        OR CHOOSE AN INDIAN STATE / UNION TERRITORY
+                    </label>
+                    <select id="india-region">
+                        <option value="">All India — search any city or town</option>
+                    </select>
+
+                    <div class="location-suggestions" id="location-suggestions"
+                         role="listbox" aria-label="Location suggestions" hidden></div>
+                    <p class="location-coordinates" id="location-coordinates"
+                       aria-live="polite"></p>
+
+                    <p class="field-hint">
+                        Search manually or choose “Use my location” to share
+                        your position with this browser. Search covers indexed Indian
+                        cities and towns; choose a state or UT to find its capital.
+                        Geocoding by Open-Meteo.
+                    </p>
+
+                </div>
+
+                <button class="secondary-button geolocation-button"
+                        id="use-location-btn">
+                    <span aria-hidden="true">◎</span>
+                    USE MY LOCATION
+                </button>
+
+            </div>
+
+
+            <!-- Night Honor Score and weather -->
+
+            <div class="weather-overview-grid">
+
+                <article class="honor-score-card glass-panel reveal">
+
+                    <div class="card-topline">
+                        <span>THE NIGHT HONOR SCORE</span>
+                        <span class="card-symbol">✦</span>
+                    </div>
+
+                    <div class="honor-score-display">
+
+                        <div class="score-ring" id="score-ring"
+                             role="img"
+                             aria-label="Night Honor Score unavailable">
+
+                            <div class="score-ring-inner">
+
+                                <span class="score-number"
+                                      id="honor-score">--</span>
+
+                                <span class="score-out-of">/ 100</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="score-description">
+
+                            <span class="score-status" id="score-status">
+                                AWAITING SKY DATA
+                            </span>
+
+                            <p id="score-explanation">
+                                Connect weather data to calculate
+                                your stargazing conditions.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="score-breakdown">
+
+                        <div class="score-breakdown-item">
+                            <span>Cloud cover</span>
+                            <strong id="score-cloud-weight">--</strong>
+                        </div>
+
+                        <div class="score-breakdown-item">
+                            <span>Visibility</span>
+                            <strong id="score-visibility-weight">--</strong>
+                        </div>
+
+                        <div class="score-breakdown-item">
+                            <span>Humidity</span>
+                            <strong id="score-humidity-weight">--</strong>
+                        </div>
+
+                        <div class="score-breakdown-item">
+                            <span>Wind</span>
+                            <strong id="score-wind-weight">--</strong>
+                        </div>
+
+                        <div class="score-breakdown-item">
+                            <span>Moon illumination</span>
+                            <strong id="score-moon-weight">--</strong>
+                        </div>
+
+                        <div class="score-breakdown-item">
+                            <span>Light pollution · VIIRS map only</span>
+                            <strong id="score-light-pollution">Map only</strong>
+                        </div>
+
+                    </div>
+
+                    <p class="data-disclaimer">
+                        Weather-model conditions and calculated lunar illumination only.
+                        Light pollution is shown as NASA satellite imagery and is not scored.
+                    </p>
+
+                </article>
+
+
+                <article class="weather-card glass-panel reveal">
+
+                    <div class="card-topline">
+                        <span>ATMOSPHERIC INTELLIGENCE</span>
+                        <span class="live-indicator">
+                            <span class="status-dot"></span>
+                            <span id="weather-status">NOT CONNECTED</span>
+                        </span>
+                    </div>
+
+                    <div class="weather-primary">
+
+                        <div class="weather-icon" aria-hidden="true">☁</div>
+
+                        <div>
+                            <span class="weather-temperature"
+                                  id="weather-temperature">--°</span>
+
+                            <span class="weather-condition"
+                                  id="weather-condition">Awaiting weather</span>
+                        </div>
+
+                    </div>
+
+                    <div class="weather-metrics-grid">
+
+                        <div class="weather-metric">
+                            <span class="metric-icon">☁</span>
+                            <span class="metric-label">CLOUD COVER</span>
+                            <strong id="cloud-cover">--%</strong>
+                        </div>
+
+                        <div class="weather-metric">
+                            <span class="metric-icon">◉</span>
+                            <span class="metric-label">VISIBILITY</span>
+                            <strong id="visibility">-- km</strong>
+                        </div>
+
+                        <div class="weather-metric">
+                            <span class="metric-icon">≋</span>
+                            <span class="metric-label">HUMIDITY</span>
+                            <strong id="humidity">--%</strong>
+                        </div>
+
+                        <div class="weather-metric">
+                            <span class="metric-icon">⌁</span>
+                            <span class="metric-label">WIND SPEED</span>
+                            <strong id="wind-speed">-- km/h</strong>
+                        </div>
+
+                    </div>
+
+                    <div class="weather-footer">
+                        <span id="weather-updated">No weather update yet</span>
+
+                        <button class="text-button"
+                                id="refresh-weather-btn">
+                            REFRESH ↻
+                        </button>
+                    </div>
+
+                </article>
+
+            </div>
+
+
+            <!-- Stargazing map -->
+
+            <div class="map-panel glass-panel reveal">
+
+                <div class="panel-heading">
+
+                    <div>
+                        <span class="panel-kicker">FIELD INTELLIGENCE</span>
+                        <h3>THE OBSERVATION MAP</h3>
+                        <p>Explore labeled satellite imagery and nearby places. Zoom in to inspect rooftops where high-resolution coverage is available; imagery is not live.</p>
+                    </div>
+
+                </div>
+
+                <div class="map-search-controls">
+                    <div class="map-toolbar">
+                        <label for="nearby-radius">NEARBY RADIUS</label>
+                        <select id="nearby-radius" aria-label="Nearby place search radius">
+                            <option value="10000" selected>10 km</option>
+                            <option value="25000">25 km</option>
+                            <option value="50000">50 km</option>
+                        </select>
+                        <button class="secondary-button" id="toggle-viirs-layer"
+                                type="button" aria-pressed="false">
+                            SHOW NASA NIGHT LIGHTS
+                        </button>
+                        <button class="secondary-button" id="toggle-satellite-map"
+                                type="button" aria-pressed="true">
+                            SHOW STREET MAP
+                        </button>
+                        <button class="secondary-button" id="toggle-topographic-map"
+                                type="button" aria-pressed="false">
+                            SHOW TOPOGRAPHY
+                        </button>
+                        <button class="text-button" id="center-map-button"
+                                type="button">CENTER ON LOCATION</button>
+                        <button class="text-button" id="retry-nearby-button"
+                                type="button">RETRY NEARBY SEARCH</button>
+                    </div>
+                    <p class="map-layer-status" id="map-layer-status" aria-live="polite">
+                        Select a location to explore nearby places on satellite imagery. NASA VIIRS imagery is an indicator only;
+                        it does not provide a point-level Bortle or light-pollution reading.
+                    </p>
+                    <p class="map-legend" aria-label="Map marker legend">
+                        ☾ Selected point · ✧ Temple / place of worship · ⛩ Shrine · ▲ Mountain · ✦ Possible star-viewing candidate
+                    </p>
+                    <p class="map-interaction-hint">
+                        DRAG TO PAN · SCROLL TO ZOOM · USE + / − TO CHANGE SCALE
+                    </p>
+
+                </div>
+
+                <div class="map-container" id="stargazing-map">
+
+                    <div class="map-loading-state" id="map-loading-state">
+
+                        <div class="map-crosshair" aria-hidden="true">⌖</div>
+
+                        <h4>THE STARS AWAIT</h4>
+
+                        <p>Select a place above to load its map.</p>
+
+                        <span class="integration-label">
+                            SATELLITE TILES · ESRI
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="nearby-spots-heading">
+
+                    <h3>NEARBY PLACES & STAR-VIEWING CANDIDATES</h3>
+
+                    <span id="spot-count">AWAITING LOCATION</span>
+
+                </div>
+
+                <p class="map-layer-status" id="nearby-data-status" aria-live="polite">
+                    Nearby map features are community-mapped and are not verified observing sites.
+                </p>
+                <p class="star-candidate-status" id="star-candidate-status" aria-live="polite">
+                    ✦ Candidates are selected from mapped mountains/viewpoints and distance only. They are not verified dark-sky sites; check night-light imagery, weather, access, and safety.
+                </p>
+
+                <div class="nearby-spots-grid" id="nearby-spots">
+
+                    <p class="empty-state glass-panel">
+                        Choose a location to find mapped places and possible star-viewing candidates nearby.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="content-section academy-section" id="academy">
+            <div class="section-heading reveal">
+                <div class="section-index">02 / ASTRAL ACADEMY</div>
+                <div class="section-heading-row">
+                    <div>
+                        <h2>LEARN TO READ <span>THE UNIVERSE.</span></h2>
+                        <p>Don't just look at the stars. Learn to read them. Explore a catalog-based sky, practice constellations, and build observing skills at your own pace.</p>
+                    </div>
+                    <div class="section-emblem academy-emblem" aria-hidden="true">✦</div>
+                </div>
+            </div>
+
+            <div class="academy-hero glass-panel reveal">
+                <div class="academy-hero-copy">
+                    <span class="panel-kicker">YOUR PERSONAL SKY SCHOOL</span>
+                    <h3>ASTRAL <span>ACADEMY</span></h3>
+                    <p>From your first bright star to celestial navigation: learn with real star-catalog coordinates, clear explanations, and hands-on challenges.</p>
+                    <a class="primary-button" href="#academy-map"><span>ENTER THE STAR MAP</span><span aria-hidden="true">↗</span></a>
+                </div>
+                <div class="academy-progress-card">
+                    <span class="panel-kicker">YOUR LEARNING JOURNEY</span>
+                    <strong class="academy-progress-value" id="academy-progress-value">0%</strong>
+                    <div class="academy-progress-track" role="progressbar" id="academy-progress-bar" aria-label="Academy progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="academy-progress-fill"></span></div>
+                    <p id="academy-progress-copy">Complete a lesson or challenge to begin.</p>
+                    <div class="academy-badges" id="academy-badges" aria-live="polite"></div>
+                    <a class="secondary-button academy-continue-button" id="academy-continue-learning" href="#academy-map">CONTINUE LEARNING ↗</a>
+                    <label class="sr-only" for="academy-level">Learning level</label>
+                    <select id="academy-level">
+                        <option value="beginner">Beginner · Sky Beginner</option>
+                        <option value="intermediate">Intermediate · Star Explorer</option>
+                        <option value="advanced">Advanced · Cosmic Observer</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="academy-daily-grid">
+                <article class="academy-daily-card glass-panel">
+                    <span class="panel-kicker">TODAY'S DISCOVERY</span>
+                    <h3 id="academy-discovery-title">Why stars twinkle</h3>
+                    <p id="academy-discovery-copy">Earth's moving atmosphere bends starlight by changing amounts, so stars seem to shimmer.</p>
+                    <button class="text-button" type="button" data-academy-lesson="twinkle">EXPLORE THE IDEA ↗</button>
+                </article>
+                <article class="academy-daily-card academy-fact-card glass-panel">
+                    <span class="panel-kicker">A RANDOM COSMIC FACT</span>
+                    <p id="academy-fact-copy" aria-live="polite">A light-year is a distance: the path light travels in one year, about 9.46 trillion kilometres.</p>
+                    <button class="text-button" type="button" id="academy-new-fact">ANOTHER FACT ↻</button>
+                </article>
+            </div>
+
+            <div class="academy-module-grid" aria-label="Academy learning modules">
+                <a class="academy-module-card glass-panel" href="#academy-map"><span>01 · EXPLORE</span><strong>Interactive star map</strong><small>Catalog stars and constellation lines</small></a>
+                <a class="academy-module-card glass-panel" href="#academy-constellations"><span>02 · RECOGNISE</span><strong>Constellation field guide</strong><small>Ten familiar patterns, season by season</small></a>
+                <a class="academy-module-card glass-panel" href="#academy-navigation"><span>03 · ORIENT</span><strong>Celestial navigation</strong><small>Find north with the Big Dipper</small></a>
+                <a class="academy-module-card glass-panel" href="#academy-planets"><span>04 · COMPARE</span><strong>Planet identification lab</strong><small>Learn the telltale differences</small></a>
+                <a class="academy-module-card glass-panel" href="#academy-lessons"><span>05 · UNDERSTAND</span><strong>How the sky works</strong><small>Short, visual astronomy lessons</small></a>
+                <a class="academy-module-card glass-panel" href="#academy-challenges"><span>06 · PRACTISE</span><strong>Sky-reading challenges</strong><small>Hints, activities, and explanations</small></a>
+            </div>
+
+            <div class="academy-panel-heading" id="academy-map">
+                <div><span class="panel-kicker">CATALOG SKY · FIXED REFERENCE VIEW</span><h3>THE INTERACTIVE STAR MAP</h3><p>Stars are plotted from approximate right ascension and declination in the selected constellation. This is a learning chart, not a live, location-specific planetarium.</p></div>
+            </div>
+            <div class="academy-map-layout">
+                <div class="academy-map-panel glass-panel">
+                    <div class="academy-map-toolbar">
+                        <label for="academy-constellation-select">CONSTELLATION</label>
+                        <select id="academy-constellation-select" aria-label="Choose a constellation"></select>
+                        <button class="secondary-button" type="button" id="academy-toggle-lines" aria-pressed="true">LINES ON</button>
+                        <button class="secondary-button" type="button" id="academy-toggle-labels" aria-pressed="true">LABELS ON</button>
+                        <button class="secondary-button" type="button" id="academy-toggle-equator" aria-pressed="false">EQUATOR OFF</button>
+                        <button class="secondary-button" type="button" id="academy-toggle-planets" aria-pressed="false">PLANET LABELS OFF</button>
+                        <button class="icon-button" type="button" id="academy-zoom-out" aria-label="Zoom out">−</button>
+                        <span id="academy-zoom-value" aria-live="polite">1×</span>
+                        <button class="icon-button" type="button" id="academy-zoom-in" aria-label="Zoom in">+</button>
+                    </div>
+                    <label class="academy-search-label" for="academy-star-search">FIND A STAR</label>
+                    <input id="academy-star-search" type="search" placeholder="Search star names…" autocomplete="off">
+                    <div class="academy-canvas-wrap">
+                        <canvas id="academy-star-canvas" tabindex="0" aria-label="Interactive catalog star chart. Use the constellation selector and click a star to inspect it."></canvas>
+                    </div>
+                    <div class="academy-star-picks" id="academy-star-picks" aria-label="Stars in this chart"></div>
+                    <p class="academy-chart-caption" id="academy-chart-caption">Approximate catalog coordinates · north is up · east is left · illustrative line patterns</p>
+                    <p class="academy-error" id="academy-map-error" role="status" hidden></p>
+                </div>
+                <aside class="academy-star-info glass-panel" id="academy-star-info" aria-live="polite">
+                    <span class="panel-kicker">STAR FIELD NOTES</span>
+                    <h3 id="academy-star-name">Select a star</h3>
+                    <dl>
+                        <div><dt>Constellation</dt><dd id="academy-star-constellation">—</dd></div>
+                        <div><dt>Distance</dt><dd id="academy-star-distance">—</dd></div>
+                        <div><dt>Apparent magnitude</dt><dd id="academy-star-magnitude">—</dd></div>
+                        <div><dt>Spectral type</dt><dd id="academy-star-spectral">—</dd></div>
+                        <div><dt>Right ascension · J2000</dt><dd id="academy-star-ra">—</dd></div>
+                        <div><dt>Declination · J2000</dt><dd id="academy-star-dec">—</dd></div>
+                    </dl>
+                    <p id="academy-star-fact">Choose a point on the chart to see its catalog details and an observing note.</p>
+                    <p class="academy-data-note">Values are rounded reference estimates. Distances and classifications can vary between catalog releases.</p>
+                </aside>
+            </div>
+
+            <div class="academy-panel-heading" id="academy-constellations">
+                <div><span class="panel-kicker">TEN PATTERNS TO LEARN</span><h3>CONSTELLATION FIELD GUIDE</h3><p>Choose any constellation to load its star pattern and a practical identification guide.</p></div>
+                <button class="secondary-button" type="button" id="academy-find-constellation">FIND THIS CONSTELLATION IN THE SKY ↗</button>
+            </div>
+            <div class="academy-constellation-layout">
+                <div class="academy-constellation-list" id="academy-constellation-list" aria-label="Choose a constellation"></div>
+                <article class="academy-constellation-detail glass-panel" id="academy-constellation-detail" aria-live="polite"></article>
+            </div>
+
+            <div class="academy-two-column">
+                <article class="academy-learning-panel glass-panel" id="academy-navigation">
+                    <span class="panel-kicker">CELESTIAL NAVIGATION SCHOOL</span>
+                    <h3>FIND NORTH WITH THE DIPPER</h3>
+                    <p>For centuries, travelers used bright star patterns as directional guides. Follow the two outer stars of the Big Dipper's bowl away from the bowl opening; extend that line about five times their separation to reach Polaris, which lies close to the north celestial pole. In the south, the Southern Cross can help estimate the south celestial pole.</p>
+                    <div class="academy-compass" aria-label="Illustration of the Big Dipper pointer stars pointing toward Polaris">
+                        <span class="compass-north">N</span><span class="compass-east">E</span><span class="compass-south">S</span><span class="compass-west">W</span>
+                        <span class="compass-polaris">✦<small>POLARIS</small></span><span class="compass-pointer">Dubhe · Merak →</span>
+                        <span class="academy-compass-star-trail" id="academy-compass-star-trail" aria-hidden="true"></span>
+                    </div>
+                    <label for="academy-compass-time">SIMULATE THE NIGHT'S APPARENT SKY ROTATION</label>
+                    <input id="academy-compass-time" type="range" min="0" max="100" value="0" aria-label="Rotate the illustrative star pattern around the north celestial pole">
+                    <output id="academy-compass-time-output" for="academy-compass-time">0° · Educational illustration</output>
+                    <p class="academy-data-note">Polaris is a useful approximate indicator of true north in the Northern Hemisphere—not a precision navigation instrument. It is not visible from most of the Southern Hemisphere.</p>
+                    <button class="text-button" type="button" data-academy-complete="navigation">MARK NAVIGATION LESSON COMPLETE ✓</button>
+                </article>
+                <article class="academy-learning-panel glass-panel" id="academy-planets">
+                    <span class="panel-kicker">PLANET IDENTIFICATION LAB</span>
+                    <h3>PLANETS ARE NOT STARS</h3>
+                    <p>Planets usually twinkle less because their apparent disks average out atmospheric shimmer. Against the distant star background, they shift position night after night. Visibility depends on each planet's orbit and geometry; no live positions are shown here.</p>
+                    <label for="academy-planet-select">EXPLORE A PLANET</label>
+                    <select id="academy-planet-select"></select>
+                    <div class="academy-planet-profile" id="academy-planet-profile" aria-live="polite"></div>
+                    <p class="academy-data-note">Orbital periods are approximate sidereal periods relative to Earth. Planet positions and visibility are not calculated in this learning lab.</p>
+                </article>
+            </div>
+
+            <div class="academy-panel-heading" id="academy-lessons">
+                <div><span class="panel-kicker">SHORT EXPLAINERS</span><h3>UNDERSTAND THE NIGHT SKY</h3><p>Select a lesson for a simple explanation, the science behind it, and an interactive visual.</p></div>
+            </div>
+            <div class="academy-lesson-layout">
+                <div class="academy-lesson-list" id="academy-lesson-list"></div>
+                <article class="academy-lesson-detail glass-panel" id="academy-lesson-detail" aria-live="polite"></article>
+            </div>
+
+            <div class="academy-panel-heading" id="academy-challenges">
+                <div><span class="panel-kicker">PRACTICE WHAT YOU'VE LEARNED</span><h3>STAR-READING CHALLENGES</h3><p>Try a task first, reveal a hint if needed, then check the explanation.</p></div>
+            </div>
+            <div class="academy-challenge-layout">
+                <div class="academy-challenge-list" id="academy-challenge-list"></div>
+                <article class="academy-challenge-detail glass-panel" id="academy-challenge-detail" aria-live="polite"></article>
+            </div>
+
+            <div class="academy-quiz-panel glass-panel" id="academy-quiz">
+                <div class="academy-panel-heading">
+                    <div><span class="panel-kicker">KNOWLEDGE CHECK · <span id="academy-quiz-level">BEGINNER</span></span><h3>THE ASTRONOMY QUIZ</h3></div>
+                    <span class="academy-quiz-score" id="academy-quiz-score" aria-live="polite">0 correct</span>
+                </div>
+                <div id="academy-quiz-question" aria-live="polite"></div>
+                <div class="academy-quiz-options" id="academy-quiz-options"></div>
+                <p class="academy-quiz-feedback" id="academy-quiz-feedback" aria-live="polite"></p>
+                <button class="secondary-button" type="button" id="academy-quiz-next" hidden>NEXT QUESTION →</button>
+            </div>
+
+            <div class="academy-live-panel glass-panel" id="academy-live">
+                <div class="academy-panel-heading">
+                    <div><span class="panel-kicker">OBSERVE WHAT'S ABOVE YOU</span><h3>LIVE SKY OBSERVATION MODE</h3><p>Estimate solar rise/set and astronomical twilight for a chosen date and location. Planet and lunar rise/set ephemerides are not connected, so those positions and times are not invented.</p></div>
+                </div>
+                <div class="academy-live-controls">
+                    <button class="secondary-button" type="button" id="academy-use-location">USE MY LOCATION</button>
+                    <label for="academy-latitude">LATITUDE</label><input id="academy-latitude" type="number" min="-90" max="90" step="0.0001" placeholder="e.g. 37.7749">
+                    <label for="academy-longitude">LONGITUDE</label><input id="academy-longitude" type="number" min="-180" max="180" step="0.0001" placeholder="e.g. -122.4194">
+                    <label for="academy-observe-time">DATE &amp; TIME</label><input id="academy-observe-time" type="datetime-local">
+                </div>
+                <div class="academy-live-readout" id="academy-live-readout" aria-live="polite">
+                <p>Choose a location and time to view local date/time, estimated solar twilight/rise/set, approximate Moon phase, and annual meteor peak-date estimates. Lunar rise/set and location-specific planet/constellation visibility are not calculated here.</p>
+                </div>
+                <p class="academy-data-note">Location stays in this browser. Solar times are approximate NOAA-style calculations and shown in UTC; Moon phase uses this site's mean synodic-month model. Neither is a precision ephemeris.</p>
+            </div>
+
+            <p class="academy-attribution">Star reference values: <a href="https://vizier.cds.unistra.fr/viz-bin/VizieR?-source=V/50" target="_blank" rel="noopener noreferrer">Yale Bright Star Catalogue</a> and <a href="https://simbad.cds.unistra.fr/simbad/" target="_blank" rel="noopener noreferrer">SIMBAD</a>; constellation boundaries and stick figures are simplified for learning. Coordinates are approximate J2000 equatorial positions. Planet orbital periods: <a href="https://science.nasa.gov/solar-system/" target="_blank" rel="noopener noreferrer">NASA Solar System Exploration</a>. Solar rise/set method: <a href="https://gml.noaa.gov/grad/solcalc/calcdetails.html" target="_blank" rel="noopener noreferrer">NOAA Solar Calculator</a>. Meteor shower peak dates: <a href="https://www.amsmeteors.org/calendar/" target="_blank" rel="noopener noreferrer">American Meteor Society</a>. The chart is a fixed catalog view, not real-time sky data.</p>
+        </section>
+
+
+        <!-- =====================================
+             CELESTIAL SCROLL: EVENT TRACKER
+        ====================================== -->
+
+        <section class="content-section events-section" id="events">
+
+            <div class="section-heading reveal">
+
+                <div class="section-index">03 / THE CELESTIAL SCROLL</div>
+
+                <div class="section-heading-row">
+
+                    <div>
+                        <h2>TIME YOUR <span>ENCOUNTER.</span></h2>
+
+                        <p>
+                            Track approximate Moon phases, published annual meteor peak dates,
+                            NASA/JPL near-Earth-object passes, and scheduled rocket launch NETs.
+                            Feeds can change; not every object or event will be visible from your location.
+                        </p>
+                    </div>
+
+                    <div class="section-emblem" aria-hidden="true">☾</div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Moon phase tracker -->
+
+            <div class="moon-tracker glass-panel reveal">
+
+                <div class="moon-tracker-main">
+
+                    <div class="moon-visual" id="current-moon-visual"
+                         aria-hidden="true">
+                        <div class="moon-phase-disc"></div>
+                    </div>
+
+                    <div class="moon-details">
+
+                        <span class="panel-kicker">THE LUNAR CYCLE</span>
+
+                        <h3 id="current-moon-phase">Moon phase unavailable</h3>
+
+                        <p id="moon-phase-description">
+                            Lunar illumination and phase information
+                            will appear after calculation.
+                        </p>
+
+                        <div class="moon-illumination">
+
+                            <span>ILLUMINATION</span>
+
+                            <div class="illumination-track">
+                                <div class="illumination-fill"
+                                     id="illumination-fill"></div>
+                            </div>
+
+                            <strong id="moon-illumination">--%</strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="moon-times-grid">
+
+                    <div class="moon-time-item">
+                        <span>MOONRISE</span>
+                        <strong id="moonrise-time">Not calculated</strong>
+                    </div>
+
+                    <div class="moon-time-item">
+                        <span>MOONSET</span>
+                        <strong id="moonset-time">Not calculated</strong>
+                    </div>
+
+                    <div class="moon-time-item">
+                        <span>NEXT FULL MOON</span>
+                        <strong id="next-full-moon">--</strong>
+                    </div>
+
+                    <div class="moon-time-item">
+                        <span>NEXT NEW MOON</span>
+                        <strong id="next-new-moon">--</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Calendar controls -->
+
+            <div class="calendar-toolbar glass-panel reveal">
+
+                <div class="calendar-month-controls">
+
+                    <button class="icon-button"
+                            id="calendar-prev"
+                            aria-label="Previous month">←</button>
+
+                    <h3 id="calendar-month-label">COSMIC CALENDAR</h3>
+
+                    <button class="icon-button"
+                            id="calendar-next"
+                            aria-label="Next month">→</button>
+
+                </div>
+
+                <div class="calendar-filters">
+
+                    <label for="event-search">SEARCH EVENTS</label>
+                    <input type="search" id="event-search"
+                           placeholder="Search lunar phases">
+
+                    <label for="event-type-filter">EVENT TYPE</label>
+
+                    <select id="event-type-filter">
+                        <option value="all">All events</option>
+                        <option value="meteor">Meteor showers</option>
+                        <option value="eclipse">Eclipses</option>
+                        <option value="moon">Moon phases</option>
+                        <option value="neo">NASA close approaches</option>
+                        <option value="iss">ISS passes</option>
+                        <option value="launch">Rocket launches</option>
+                    </select>
+
+                    <label for="event-date-filter">DATE</label>
+
+                    <input type="date" id="event-date-filter">
+
+                    <button class="secondary-button"
+                            id="reset-event-filters">
+                        RESET
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- Calendar view -->
+
+            <div class="calendar-panel glass-panel reveal">
+
+                <div class="japanese-calendar-heading">
+                    <span class="japanese-calendar-seal" aria-hidden="true">月</span>
+                    <div>
+                        <span class="panel-kicker">月の暦 · TSUKI NO KOYOMI</span>
+                        <p>Moon phase estimates · select a day for its illumination</p>
+                    </div>
+                </div>
+
+                <div class="calendar-weekdays" aria-hidden="true">
+                    <span aria-label="Sunday">日 <small>SUN</small></span>
+                    <span aria-label="Monday">月 <small>MON</small></span>
+                    <span aria-label="Tuesday">火 <small>TUE</small></span>
+                    <span aria-label="Wednesday">水 <small>WED</small></span>
+                    <span aria-label="Thursday">木 <small>THU</small></span>
+                    <span aria-label="Friday">金 <small>FRI</small></span>
+                    <span aria-label="Saturday">土 <small>SAT</small></span>
+                </div>
+
+                <div class="calendar-grid" id="calendar-grid"
+                     aria-label="Celestial event calendar">
+
+                    <!-- JavaScript will generate calendar dates. -->
+
+                </div>
+
+                <div class="calendar-footer">
+                    <span id="selected-moon-details" aria-live="polite">
+                        Lunar phase dates are approximate calculations.
+                    </span>
+
+                    <button class="text-button"
+                            id="calendar-today-btn">
+                        RETURN TO TODAY ↗
+                    </button>
+                </div>
+
+            </div>
+
+            <section class="sky-countdown-section" aria-labelledby="sky-countdown-title">
+                <div class="events-list-header">
+                    <div>
+                        <span class="panel-kicker">KONNICHIWA, COSMOS · LIVE COUNTDOWNS</span>
+                        <h3 id="sky-countdown-title">THE NEXT CELESTIAL MOMENTS</h3>
+                    </div>
+                    <button class="text-button" id="refresh-countdowns" type="button">
+                        REFRESH EVENTS ↻
+                    </button>
+                </div>
+                <div class="sky-countdown-grid" id="sky-countdown-grid" aria-live="polite">
+                    <p class="empty-state glass-panel">Loading sourced sky events…</p>
+                </div>
+                <div class="launch-countdown-panel glass-panel">
+                    <div class="panel-heading">
+                        <div>
+                            <span class="panel-kicker">LAUNCH LIBRARY 2 · THE SPACE DEVS</span>
+                            <h3>UPCOMING ROCKET LAUNCHES</h3>
+                        </div>
+                        <a class="text-button" href="https://thespacedevs.com/llapi"
+                           target="_blank" rel="noopener noreferrer">SOURCE ↗</a>
+                    </div>
+                    <div id="rocket-launch-countdowns" class="rocket-launch-list" aria-live="polite">
+                        <p class="empty-state">Loading upcoming launch windows…</p>
+                    </div>
+                </div>
+                <p class="data-disclaimer countdown-source-note">
+                    NASA NEO close approaches use NASA/JPL data and are not visibility predictions.
+                    Moon phases use an approximate local model. Meteor peak nights are annual estimates
+                    from the American Meteor Society. Launch NETs are third-party schedules and may change.
+                    Countdown times use your selected location's timezone when available.
+                </p>
+            </section>
+
+
+            <!-- Events list -->
+
+            <section class="event-archive glass-panel" aria-labelledby="event-archive-title">
+                <div class="event-archive-heading">
+                    <div>
+                        <span class="panel-kicker">THE CELESTIAL ARCHIVE</span>
+                        <h3 id="event-archive-title">UPCOMING ENCOUNTERS</h3>
+                        <p>Choose a month to see its upcoming sourced astronomy events.</p>
+                    </div>
+                    <div class="event-month-picker">
+                        <label for="event-month-filter">SHOW EVENTS FOR</label>
+                        <select id="event-month-filter" aria-controls="events-list"></select>
+                    </div>
+                </div>
+                <p class="event-archive-count" id="event-count" aria-live="polite">Loading events…</p>
+                <p class="event-table-hint">Swipe horizontally to see all event details on a small screen.</p>
+                <div class="event-table-scroll">
+                    <table class="event-table" id="events-list">
+                        <caption class="sr-only" id="event-table-caption">Upcoming astronomy events for the selected month</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">DATE / TIME</th>
+                                <th scope="col">EVENT</th>
+                                <th scope="col">TYPE</th>
+                                <th scope="col">DETAILS</th>
+                                <th scope="col">SOURCE</th>
+                                <th scope="col">ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody id="event-table-body">
+                            <tr><td colspan="6">Loading sourced events…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <div class="upcoming-reminders-panel glass-panel reveal">
+                <div class="panel-heading">
+                    <div>
+                        <span class="panel-kicker">PERSONAL OBSERVATORY</span>
+                        <h3>UPCOMING REMINDERS</h3>
+                    </div>
+                    <button class="secondary-button" id="export-reminders-json" type="button">
+                        EXPORT JSON
+                    </button>
+                </div>
+                <div id="reminders-list" class="reminders-list" aria-live="polite">
+                    <p class="empty-state">No reminders saved yet.</p>
+                </div>
+                <p class="field-hint">
+                    Browser alerts can fire only while this page is open. They are not scheduled push notifications.
+                </p>
+            </div>
+
+            <p class="data-disclaimer event-source-note">
+                Lunar phase milestones use an approximate synodic-month model.
+                Meteor shower peak dates are annual estimates from the American Meteor Society.
+                NASA/JPL close approaches and launch schedule data are shown with source links;
+                neither guarantees a visible sky event at your location.
+            </p>
+
+
+            <!-- Alert creation -->
+
+            <div class="alert-creation-panel glass-panel reveal">
+
+                <div class="alert-icon" aria-hidden="true">◷</div>
+
+                <div class="alert-copy">
+                    <h3>NEVER MISS THE MOMENT.</h3>
+                    <p>
+                        Create personal reminders for a chosen date and time.
+                        Browser alerts work only while this page remains open.
+                    </p>
+                </div>
+
+                <button class="primary-button"
+                        id="create-alert-btn">
+                    CREATE SKY ALERT
+                </button>
+
+            </div>
+
+
+            <!-- Alert dialog -->
+
+            <dialog class="modal-dialog" id="alert-dialog">
+
+                <form id="alert-form" class="modal-content">
+
+                    <div class="modal-header">
+                        <span class="panel-kicker">PERSONAL OBSERVATORY</span>
+
+                        <button type="button"
+                                class="icon-button modal-close"
+                                data-close-dialog="alert-dialog"
+                                aria-label="Close alert form">×</button>
+                    </div>
+
+                    <h3>CREATE A SKY ALERT</h3>
+
+                    <label for="alert-title">ALERT NAME</label>
+                    <input type="text"
+                           id="alert-title"
+                           name="title"
+                           placeholder="The Moon Rises Tonight"
+                           required>
+
+                    <label for="alert-event-type">EVENT TYPE</label>
+
+                    <select id="alert-event-type" name="type" required>
+                        <option value="moon">Lunar phase</option>
+                        <option value="moonrise">Moonrise</option>
+                        <option value="meteor">Meteor shower</option>
+                        <option value="eclipse">Eclipse</option>
+                        <option value="iss">ISS pass</option>
+                        <option value="launch">Rocket launch</option>
+                        <option value="custom">Custom event</option>
+                    </select>
+
+                    <label for="alert-datetime">REMINDER TIME</label>
+                    <input type="datetime-local"
+                           id="alert-datetime"
+                           name="datetime"
+                           required>
+
+                    <label class="checkbox-label">
+                        <input type="checkbox"
+                               id="alert-notification-enabled"
+                               name="notifications"
+                               checked>
+                        Enable browser notification, if permitted
+                    </label>
+
+                    <button class="primary-button" type="submit">
+                        SAVE ALERT
+                    </button>
+
+                    <p class="field-hint">
+                        Saved alerts and scheduled notifications
+                        require JavaScript and browser permission.
+                    </p>
+
+                </form>
+
+            </dialog>
+
+
+        </section>
+
+
+        <!-- =====================================
+             SPIRIT LENS: IMAGE EXPLORER
+        ====================================== -->
+
+        <section class="content-section spirit-lens-section"
+                 id="spirit-lens">
+
+            <div class="section-heading reveal">
+
+                <div class="section-index">04 / THE SPIRIT LENS</div>
+
+                <div class="section-heading-row">
+
+                    <div>
+                        <h2>REVEAL THE <span>INVISIBLE.</span></h2>
+
+                        <p>
+                            Restore noisy astronomical images and investigate
+                            celestial objects while preserving scientific integrity.
+                        </p>
+                    </div>
+
+                    <div class="section-emblem" aria-hidden="true">✧</div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Upload and restoration workspace -->
+
+            <div class="image-search-panel glass-panel reveal">
+                <div class="panel-heading">
+                    <div>
+                        <span class="panel-kicker">NASA IMAGE AND VIDEO LIBRARY</span>
+                        <h3>EXPLORE THE ARCHIVE</h3>
+                    </div>
+                    <span class="integration-label">LIVE PUBLIC CATALOGUE</span>
+                </div>
+                <form id="image-search-form" class="image-search-form">
+                    <label class="sr-only" for="image-search-input">Search NASA astronomy images</label>
+                    <input id="image-search-input" type="search"
+                           placeholder="Search nebulae, planets, missions..."
+                           minlength="2" maxlength="100" required>
+                    <button class="primary-button" type="submit">SEARCH IMAGES</button>
+                </form>
+                <p id="image-search-status" class="field-hint" aria-live="polite">
+                    Search NASA's public image catalogue. Credits and source links are shown with results.
+                </p>
+                <div id="image-search-results" class="image-search-results"
+                     aria-live="polite"></div>
+            </div>
+
+            <div class="restoration-workspace reveal">
+
+                <div class="restoration-sidebar glass-panel">
+
+                    <div class="panel-heading">
+                        <div>
+                            <span class="panel-kicker">IMAGE LABORATORY</span>
+                            <h3>SPIRIT LENS</h3>
+                        </div>
+                    </div>
+
+                    <form id="restoration-form">
+
+                        <div class="upload-zone"
+                             id="upload-zone"
+                             tabindex="0"
+                             role="button"
+                             aria-label="Choose an astronomical image to upload">
+
+                            <input type="file"
+                                   id="astronomy-image-input"
+                                   accept="image/png,image/jpeg,image/webp"
+                                   hidden>
+
+                            <div class="upload-icon" aria-hidden="true">↥</div>
+
+                            <h4>OFFER AN IMAGE</h4>
+
+                            <p>
+                                Drag and drop an astronomical image here,
+                                or browse your files.
+                            </p>
+
+                            <span class="upload-formats">
+                                PNG · JPG · WEBP (10 MB max)
+                            </span>
+
+                            <span class="integration-label">
+                                Local preview only; files are not uploaded.
+                            </span>
+
+                        </div>
+
+
+                        <div class="form-field">
+
+                            <label for="restoration-model">
+                                RESTORATION METHOD
+                            </label>
+
+                            <select id="restoration-model"
+                                    name="model"
+                                    disabled>
+
+                                <option value="denoise">
+                                    No AI restoration backend configured
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-field">
+
+                            <label for="restoration-strength">
+                                RESTORATION STRENGTH
+                            </label>
+
+                            <div class="range-labels">
+                                <span>SUBTLE</span>
+                                <strong id="restoration-strength-value">50%</strong>
+                                <span>STRONG</span>
+                            </div>
+
+                            <input type="range"
+                                   id="restoration-strength"
+                                   name="strength"
+                                   min="0"
+                                   max="100"
+                                   value="50"
+                                   disabled>
+
+                        </div>
+
+
+                        <label class="checkbox-label">
+                            <input type="checkbox"
+                                   id="preserve-original"
+                                   checked
+                                   disabled>
+                            Preserve original image
+                        </label>
+
+                        <label class="checkbox-label">
+                            <input type="checkbox"
+                                   id="detect-objects"
+                                   checked
+                                   disabled>
+                            Detect stars and galaxies
+                        </label>
+
+
+                        <button type="submit"
+                                class="primary-button full-width-button"
+                                id="restore-image-btn"
+                                disabled>
+                            PROCESSOR NOT CONFIGURED
+                        </button>
+
+                    </form>
+
+
+                    <div class="integrity-notice">
+
+                        <span aria-hidden="true">◈</span>
+
+                        <div>
+                            <strong>SCIENTIFIC INTEGRITY PROTOCOL</strong>
+
+                            <p>
+                                Restoration must reduce noise and blur
+                                without fabricating stars, galaxies,
+                                or other astronomical details.
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Image comparison -->
+
+                <div class="image-lab-main glass-panel">
+
+                    <div class="image-lab-toolbar">
+
+                        <div>
+                            <span class="panel-kicker">VISUAL ANALYSIS</span>
+                            <h3>OPTICAL COMPARISON</h3>
+                        </div>
+
+                        <div class="image-toolbar-actions">
+
+                            <button class="icon-button"
+                                    id="zoom-out-btn"
+                                    title="Zoom out"
+                                    aria-label="Zoom out">−</button>
+
+                            <span id="zoom-level">100%</span>
+
+                            <button class="icon-button"
+                                    id="zoom-in-btn"
+                                    title="Zoom in"
+                                    aria-label="Zoom in">+</button>
+
+                            <button class="icon-button"
+                                    id="reset-zoom-btn"
+                                    title="Reset zoom"
+                                    aria-label="Reset zoom">⟳</button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="comparison-container"
+                         id="comparison-container">
+
+                        <div class="comparison-empty-state"
+                             id="comparison-empty-state">
+
+                            <div class="empty-state-orbit">
+                                <span>✦</span>
+                            </div>
+
+                            <h3>THE LENS IS WAITING.</h3>
+
+                            <p>
+                                Upload an image for a private local preview.
+                                No restoration processor is configured.
+                            </p>
+
+                        </div>
+
+
+                        <div class="comparison-image-stage"
+                             id="comparison-image-stage"
+                             hidden>
+
+                            <img src=""
+                                 id="original-image"
+                                 class="comparison-image original-image"
+                                 alt="Original astronomical image">
+
+                            <div class="restored-image-clip"
+                                 id="restored-image-clip">
+
+                                <img src=""
+                                     id="restored-image"
+                                     class="comparison-image restored-image"
+                                     alt="No processed image is available">
+
+                            </div>
+
+
+                            <!-- Object-detection overlay -->
+
+                            <canvas id="object-overlay"
+                                    class="object-overlay"
+                                    aria-label="Detected celestial object overlays">
+                            </canvas>
+
+
+                            <!-- Before / after slider -->
+
+                            <div class="comparison-divider"
+                                 id="comparison-divider">
+
+                                <div class="comparison-handle"
+                                     aria-hidden="true">↔</div>
+
+                            </div>
+
+                            <input type="range"
+                                   id="comparison-slider"
+                                   min="0"
+                                   max="100"
+                                   value="50"
+                                   aria-label="Compare original and processed image"
+                                   disabled>
+
+                            <span class="comparison-label comparison-before">
+                                ORIGINAL
+                            </span>
+
+                            <span class="comparison-label comparison-after">
+                                PREVIEW
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="comparison-footer">
+
+                        <div class="comparison-legend">
+                            <span><i class="legend-original"></i> ORIGINAL</span>
+                            <span><i class="legend-restored"></i> NO PROCESSED OUTPUT</span>
+                            <span><i class="legend-detected"></i> NO DETECTION MODEL</span>
+                        </div>
+
+                        <span class="field-hint">No AI processing or object detection is connected.</span>
+
+                    </div>
+
+
+                    <!-- Processing state -->
+
+                    <div class="processing-panel"
+                         id="processing-panel"
+                         hidden>
+
+                        <div class="processing-spinner"></div>
+
+                        <h4 id="processing-title">
+                            INITIALIZING RESTORATION
+                        </h4>
+
+                        <p id="processing-description">
+                            Waiting for the image-processing engine.
+                        </p>
+
+                        <div class="processing-progress-track">
+                            <div class="processing-progress-fill"
+                                 id="processing-progress-fill"></div>
+                        </div>
+
+                        <span id="processing-status">
+                            PROCESSOR NOT CONNECTED
+                        </span>
+
+                    </div>
+
+
+                    <!-- Integrity and result information -->
+
+                    <div class="restoration-result-grid">
+
+                        <div class="result-metric">
+                            <span>NOISE LEVEL</span>
+                            <strong id="result-noise-level">Not measured</strong>
+                        </div>
+
+                        <div class="result-metric">
+                            <span>SHARPNESS</span>
+                            <strong id="result-sharpness">Not measured</strong>
+                        </div>
+
+                        <div class="result-metric">
+                            <span>OBJECTS ANALYZED</span>
+                            <strong id="result-object-count">Not analyzed</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="image-result-actions">
+
+                        <button class="secondary-button"
+                                id="download-restored-btn"
+                                disabled>
+                            PROCESSED OUTPUT UNAVAILABLE
+                        </button>
+
+                        <button class="secondary-button"
+                                id="download-report-btn"
+                                disabled>
+                            ANALYSIS REPORT UNAVAILABLE
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Detected objects -->
+
+            <div class="detected-objects-panel glass-panel reveal">
+
+                <div class="panel-heading">
+
+                    <div>
+                        <span class="panel-kicker">ASTRONOMICAL CATALOGUE</span>
+                        <h3>DETECTED CELESTIAL OBJECTS</h3>
+                    </div>
+
+                    <span class="integration-label" id="detection-status">
+                        AWAITING ANALYSIS
+                    </span>
+
+                </div>
+
+                <p class="panel-description">
+                    Object detections and measurements must come
+                    from the actual analysis pipeline, not placeholder estimates.
+                </p>
+
+                <div class="table-scroll">
+
+                    <table class="data-table">
+
+                        <thead>
+                            <tr>
+                                <th>OBJECT ID</th>
+                                <th>CLASSIFICATION</th>
+                                <th>POSITION</th>
+                                <th>BRIGHTNESS</th>
+                                <th>APPARENT SIZE</th>
+                                <th>CONFIDENCE</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="detected-objects-table">
+
+                            <tr>
+                                <td colspan="6" class="empty-table-cell">
+                                    No detection model is connected; no analysis has been performed.
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <p class="field-hint">
+                    Brightness, angular size, and confidence values
+                    must be supplied by the selected analysis model.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             DOJO DASHBOARD
+        ====================================== -->
+
+        <section class="content-section dashboard-section" id="dashboard">
+
+            <div class="section-heading reveal">
+
+                <div class="section-index">05 / THE DOJO DASHBOARD</div>
+
+                <div class="section-heading-row">
+
+                    <div>
+                        <h2>COMMAND THE <span>COSMOS.</span></h2>
+
+                        <p>
+                            Your celestial operations center for observation
+                            conditions, event intelligence, and image analysis.
+                        </p>
+                    </div>
+
+                    <div class="section-emblem" aria-hidden="true">◉</div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Overview cards -->
+
+            <div class="dashboard-stats-grid">
+
+                <article class="dashboard-stat-card glass-panel reveal">
+                    <span class="stat-icon">☾</span>
+                    <span class="stat-label">CURRENT MOON PHASE</span>
+                    <strong id="dashboard-moon-phase">--</strong>
+                    <span class="stat-footnote">Astronomical calculation</span>
+                </article>
+
+                <article class="dashboard-stat-card glass-panel reveal">
+                    <span class="stat-icon">✦</span>
+                    <span class="stat-label">NIGHT HONOR SCORE</span>
+                    <strong id="dashboard-honor-score">-- / 100</strong>
+                    <span class="stat-footnote">Weather-dependent</span>
+                </article>
+
+                <article class="dashboard-stat-card glass-panel reveal">
+                    <span class="stat-icon">☄</span>
+                    <span class="stat-label">UPCOMING EVENTS</span>
+                    <strong id="dashboard-event-count">--</strong>
+                    <span class="stat-footnote">Approximate lunar milestones</span>
+                </article>
+
+                <article class="dashboard-stat-card glass-panel reveal">
+                    <span class="stat-icon">◎</span>
+                    <span class="stat-label">IMAGES ANALYZED</span>
+                    <strong id="dashboard-images-count">0</strong>
+                    <span class="stat-footnote">This session</span>
+                </article>
+
+            </div>
+
+
+            <!-- Main dashboard columns -->
+
+            <div class="dashboard-main-grid">
+
+                <article class="dashboard-panel glass-panel reveal">
+
+                    <div class="panel-heading">
+                        <div>
+                            <span class="panel-kicker">OBSERVATION INTELLIGENCE</span>
+                            <h3>LOCAL WEATHER CONDITIONS</h3>
+                        </div>
+                        <span class="dashboard-panel-icon">◉</span>
+                    </div>
+
+                    <div class="condition-summary" id="condition-summary">
+
+                        <div class="condition-summary-icon">☾</div>
+
+                        <h4>AWAITING LOCAL CONDITIONS</h4>
+
+                        <p>
+                            Weather, darkness, and lunar information
+                            will determine the recommended observation window.
+                        </p>
+
+                    </div>
+
+                    <div class="condition-list">
+
+                        <div>
+                            <span>Recommended window</span>
+                            <strong id="recommended-window">--</strong>
+                        </div>
+
+                        <div>
+                            <span>Cloud outlook</span>
+                            <strong id="dashboard-cloud-outlook">--</strong>
+                        </div>
+
+                        <div>
+                            <span>Moon visibility impact</span>
+                            <strong id="dashboard-moon-impact">--</strong>
+                        </div>
+
+                        <div>
+                            <span>Observation recommendation</span>
+                            <strong id="dashboard-recommendation">--</strong>
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <article class="dashboard-panel glass-panel reveal">
+
+                    <div class="panel-heading">
+                        <div>
+                            <span class="panel-kicker">MISSION LOG</span>
+                            <h3>RECENT ACTIVITY</h3>
+                        </div>
+                        <span class="dashboard-panel-icon">⌁</span>
+                    </div>
+
+                    <div class="activity-list" id="activity-list">
+
+                        <div class="activity-empty-state">
+                            <span>✧</span>
+                            <p>
+                                Your recent observations, image analyses,
+                                and alerts will appear here.
+                            </p>
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+            <div class="journal-panel glass-panel reveal" id="journal">
+                <div class="panel-heading">
+                    <div>
+                        <span class="panel-kicker">LOCAL SINGLE-USER JOURNAL</span>
+                        <h3>OBSERVATION LOG</h3>
+                    </div>
+                    <div class="journal-export-actions">
+                        <button class="secondary-button" id="export-observations-csv" type="button">EXPORT CSV</button>
+                        <button class="secondary-button" id="export-observations-json" type="button">EXPORT JSON</button>
+                    </div>
+                </div>
+                <form id="observation-form" class="journal-form">
+                    <input type="hidden" name="id" id="observation-id">
+                    <div class="form-field">
+                        <label for="observation-title">SESSION TITLE</label>
+                        <input id="observation-title" name="title" maxlength="120" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="observation-object">CELESTIAL OBJECT</label>
+                        <input id="observation-object" name="object" maxlength="120" placeholder="e.g. Jupiter">
+                    </div>
+                    <div class="form-field">
+                        <label for="observation-date">DATE</label>
+                        <input id="observation-date" name="date" type="date" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="observation-location">LOCATION</label>
+                        <input id="observation-location" name="location" maxlength="160">
+                    </div>
+                    <div class="form-field">
+                        <label for="observation-conditions">CONDITIONS</label>
+                        <input id="observation-conditions" name="conditions" maxlength="500" placeholder="Clouds, seeing, equipment">
+                    </div>
+                    <div class="form-field journal-notes-field">
+                        <label for="observation-notes">NOTES</label>
+                        <textarea id="observation-notes" name="notes" maxlength="5000" rows="3"></textarea>
+                    </div>
+                    <div class="journal-form-actions">
+                        <button class="primary-button" id="save-observation-button" type="submit">SAVE OBSERVATION</button>
+                        <button class="secondary-button" id="cancel-observation-edit" type="button" hidden>CANCEL EDIT</button>
+                    </div>
+                </form>
+                <div class="journal-toolbar">
+                    <label class="sr-only" for="observation-search">Search journal</label>
+                    <input id="observation-search" type="search" placeholder="Search observations">
+                    <label class="sr-only" for="observation-date-filter">Filter by date</label>
+                    <input id="observation-date-filter" type="date">
+                </div>
+                <div id="observation-list" class="observation-list" aria-live="polite"></div>
+            </div>
+
+
+            <!-- Bonus: SkyView -->
+
+            <article class="bonus-feature-panel glass-panel reveal"
+                     id="skyview-panel">
+
+                <div class="bonus-feature-art" aria-hidden="true">
+                    <div class="bonus-orbit"></div>
+                    <span>✦</span>
+                </div>
+
+                <div class="bonus-feature-copy">
+
+                    <span class="panel-kicker">NASA PUBLIC CATALOGUE</span>
+
+                    <h3>NASA IMAGE SEARCH</h3>
+
+                    <p>Search NASA's public image and mission photography by target name.</p>
+
+                    <div class="form-field">
+
+                        <label for="skyview-target">TARGET OBJECT</label>
+
+                        <input type="text"
+                               id="skyview-target"
+                               placeholder="e.g. Andromeda Galaxy, M31">
+
+                    </div>
+
+                    <button class="primary-button"
+                            id="skyview-search-btn">
+                        SEARCH NASA IMAGES ↗
+                    </button>
+
+                    <p class="field-hint">
+                        Results open in the NASA image explorer above.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+            <!-- Bonus: spectral and time-domain analysis -->
+
+            <article class="analysis-panel glass-panel reveal"
+                     id="spectral-analysis-panel">
+
+                <div class="panel-heading">
+
+                    <div>
+                        <span class="panel-kicker">BONUS MISSION 02</span>
+                        <h3>SPECTRAL & TIME-DOMAIN ANALYSIS</h3>
+                    </div>
+
+                    <span class="integration-label">ADVANCED MODULE</span>
+
+                </div>
+
+                <p class="panel-description">
+                    Prepare astronomical observations for spectral analysis
+                    and transient-event investigation.
+                </p>
+
+                <div class="analysis-controls">
+
+                    <div class="form-field">
+                        <label for="analysis-mode">ANALYSIS MODE</label>
+
+                        <select id="analysis-mode">
+                            <option value="spectral">Spectral analysis</option>
+                            <option value="time-domain">Time-domain analysis</option>
+                            <option value="transient">Transient detection</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="analysis-dataset">DATASET / TARGET</label>
+
+                        <input type="text"
+                               id="analysis-dataset"
+                               placeholder="Enter target or dataset reference">
+                    </div>
+
+                    <button class="primary-button"
+                            id="run-analysis-btn">
+                        INITIALIZE ANALYSIS
+                    </button>
+
+                </div>
+
+                <div class="analysis-result" id="analysis-result" hidden>
+
+                    <h4>ANALYSIS OUTPUT</h4>
+
+                    <div id="analysis-result-content"></div>
+
+                </div>
+
+            </article>
+
+
+            <!-- Bonus: Honor Points -->
+
+            <article class="honor-points-panel glass-panel reveal"
+                     id="honor-points-panel">
+
+                <div class="honor-points-emblem" aria-hidden="true">
+                    <span>✦</span>
+                </div>
+
+                <div class="honor-points-copy">
+
+                    <span class="panel-kicker">BONUS MISSION 03</span>
+
+                    <h3>THE WAY OF THE STARGAZER</h3>
+
+                    <p>
+                        Earn Honor Points for observing celestial events,
+                        recording sessions, and completing astronomy missions.
+                    </p>
+
+                    <span class="field-hint">
+                        Points should be awarded only for validated activities.
+                    </span>
+
+                </div>
+
+                <div class="honor-points-total">
+
+                    <span>TOTAL HONOR</span>
+
+                    <strong id="honor-points-total">0</strong>
+
+                    <span>POINTS</span>
+
+                    <button class="secondary-button"
+                            id="view-honor-history-btn">
+                        VIEW RECORD
+                    </button>
+
+                </div>
+
+            </article>
+
+
+            <div class="honor-history-panel glass-panel"
+                 id="honor-history-panel" hidden>
+
+                <div class="panel-heading">
+                    <h3>HONOR RECORD</h3>
+
+                    <button class="text-button"
+                            id="close-honor-history-btn">
+                        CLOSE ×
+                    </button>
+                </div>
+
+                <div id="honor-history-list">
+                    <p>No validated activities recorded yet.</p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             SYSTEM STATUS / INTEGRATION CENTER
+        ====================================== -->
+
+        <section class="content-section integration-section"
+                 id="integrations">
+
+            <div class="section-heading reveal">
+
+                <div class="section-index">06 / SYSTEM INTEGRITY</div>
+
+                <h2>EVERY SIGNAL. <span>ACCOUNTED FOR.</span></h2>
+
+                <p>
+                    Check which data sources and processing engines
+                    are connected before beginning an observation mission.
+                </p>
+
+            </div>
+
+
+            <div class="integration-grid">
+
+                <article class="integration-card glass-panel">
+
+                    <span class="integration-card-icon">☁</span>
+
+                    <h3>WEATHER INTELLIGENCE</h3>
+
+                    <p>
+                        Cloud cover, humidity, visibility, and wind conditions.
+                    </p>
+
+                    <span class="integration-label"
+                          id="integration-weather-status">
+                        NOT CONNECTED
+                    </span>
+
+                </article>
+
+
+                <article class="integration-card glass-panel">
+
+                    <span class="integration-card-icon">⌖</span>
+
+                    <h3>GEOSPATIAL MAPPING</h3>
+
+                    <p>
+                        Location discovery, nearby spots, and map markers.
+                    </p>
+
+                    <span class="integration-label"
+                          id="integration-map-status">
+                        NOT CONNECTED
+                    </span>
+
+                </article>
+
+
+                <article class="integration-card glass-panel">
+
+                    <span class="integration-card-icon">☄</span>
+
+                    <h3>EVENT INTELLIGENCE</h3>
+
+                    <p>
+                        Astronomical event catalogues and orbital passes.
+                    </p>
+
+                    <span class="integration-label"
+                          id="integration-events-status">
+                        NOT CONNECTED
+                    </span>
+
+                </article>
+
+
+                <article class="integration-card glass-panel">
+
+                    <span class="integration-card-icon">✧</span>
+
+                    <h3>AI RESTORATION ENGINE</h3>
+
+                    <p>
+                        Astronomical image denoising and blur reduction.
+                    </p>
+
+                    <span class="integration-label"
+                          id="integration-ai-status">
+                        NOT CONNECTED
+                    </span>
+
+                </article>
+
+
+                <article class="integration-card glass-panel">
+
+                    <span class="integration-card-icon">◎</span>
+
+                    <h3>OBJECT DETECTION</h3>
+
+                    <p>
+                        Star and galaxy detection with object measurements.
+                    </p>
+
+                    <span class="integration-label"
+                          id="integration-detection-status">
+                        NOT CONNECTED
+                    </span>
+
+                </article>
+
+
+                <article class="integration-card glass-panel">
+
+                    <span class="integration-card-icon">⌁</span>
+
+                    <h3>TELESCOPE DATA</h3>
+
+                    <p>
+                        External astronomical surveys and image retrieval.
+                    </p>
+
+                    <span class="integration-label"
+                          id="integration-telescope-status">
+                        NOT CONNECTED
+                    </span>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <dialog class="modal-dialog global-search-dialog" id="global-search-dialog">
+            <form method="dialog" class="modal-content global-search-content">
+                <div class="modal-header">
+                    <span class="panel-kicker">APPLICATION SEARCH</span>
+                    <button class="icon-button modal-close" type="button"
+                            id="close-global-search" aria-label="Close search">×</button>
+                </div>
+                <label for="global-search-input">SEARCH THIS OBSERVATORY</label>
+                <input id="global-search-input" type="search"
+                       placeholder="Search events, observations, and sections"
+                       autocomplete="off">
+                <p class="field-hint">Search loaded NASA results, your local journal, calculated lunar phases, and app sections. Press / to open.</p>
+                <div id="global-search-results" class="global-search-results"
+                     role="listbox" aria-label="Search results"></div>
+            </form>
+        </dialog>
+
+        <!-- =====================================
+             GLOBAL NOTIFICATION CENTER
+        ====================================== -->
+
+        <div class="notification-container"
+             id="notification-container"
+             aria-live="polite"
+             aria-atomic="false">
+        </div>
+
+    </main>
+
+
+    <!-- =========================================
+         FOOTER
+    ========================================== -->
+
+    <footer class="site-footer">
+
+        <div class="footer-main">
+
+            <a class="brand footer-brand" href="#home">
+
+                <span class="brand-symbol" aria-hidden="true">☾</span>
+
+                <span class="brand-copy">
+                    <span class="brand-title">TSUKUYOMI</span>
+                    <span class="brand-subtitle">CELESTIAL INTELLIGENCE</span>
+                </span>
+
+            </a>
+
+            <p class="footer-description">
+                Look beyond the ordinary. Explore the extraordinary.
+            </p>
+
+            <a class="back-to-top" href="#top">
+                RETURN TO THE MOON GATE ↑
+            </a>
+
+        </div>
+
+        <div class="footer-bottom">
+            
+            <span>TSUKUYOMI WATCH · PECATHON 2026</span>
+
+            <span>BUILT FOR THE CURIOSITY OF THE COSMOS.</span>
+
+            <span id="footer-year">2026</span>
+
+        </div>
+
+        <p class="footer-disclaimer">
+            Weather conditions use NOAA GFS via Open-Meteo. India place search uses
+            Open-Meteo's indexed geocoding data. Nearby landmarks and base map use
+            community OpenStreetMap data; NASA EOSDIS GIBS VIIRS imagery provides a
+            visual night-lights layer only, not a measured Bortle score. Astronomy
+            images come from NASA's Image and Video Library. The page works with the
+            Node service or VS Code Live Server; static mode saves journal records
+            in this browser only.
+            Launches are from The Space Devs Launch Library 2; near-Earth object
+            approaches are from NASA/JPL NeoWs; meteor shower peak dates reference
+            the American Meteor Society.
+        </p>
+
+    </footer>
+
+
+    <!-- =========================================
+         JAVASCRIPT: PART 2
+    ========================================== -->
+
+    <script src="astronomy.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            crossorigin=""></script>
+    <script src="script.js"></script>
+    <script src="academy.js"></script>
+
+</body>
+</html>
